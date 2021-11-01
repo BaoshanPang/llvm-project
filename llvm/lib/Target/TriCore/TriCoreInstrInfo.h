@@ -1,0 +1,6 @@
+#ifndef TRICOREINSTRINFO_H_
+#define TRICOREINSTRINFO_H_
+
+
+
+#endif // TRICOREINSTRINFO_H_

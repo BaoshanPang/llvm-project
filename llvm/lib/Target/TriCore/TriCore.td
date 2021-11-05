@@ -21,9 +21,9 @@ include "llvm/Target/Target.td"
 // Descriptions
 //===----------------------------------------------------------------------===//
 
-//include "TriCoreRegisterInfo.td"
-//include "TriCoreInstrInfo.td"
-//include "TriCoreCallingConv.td"
+include "TriCoreRegisterInfo.td"
+include "TriCoreInstrInfo.td"
+include "TriCoreCallingConv.td"
 
 def TriCoreInstrInfo : InstrInfo;
 

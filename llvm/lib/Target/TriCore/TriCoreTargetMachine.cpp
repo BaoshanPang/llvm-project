@@ -10,9 +10,8 @@
 //===----------------------------------------------------------------------===//
 
 #include "TriCoreTargetMachine.h"
-// #include "LeonPasses.h"
-// #include "TriCore.h"
-// #include "TriCoreTargetObjectFile.h"
+#include "TriCore.h"
+#include "TriCoreTargetObjectFile.h"
 #include "TargetInfo/TriCoreTargetInfo.h"
 #include "llvm/CodeGen/Passes.h"
 #include "llvm/CodeGen/TargetPassConfig.h"
@@ -44,11 +43,10 @@ TriCoreTargetMachine::TriCoreTargetMachine(const Target &T, const Triple &TT,
     : LLVMTargetMachine(T,
       "e-m:e-p:32:32-i64:32-a:0:32-n32",
       TT, CPU, FS,
-      Options, RM.getValueOr(Reloc::Static), CM.getValueOr(CodeModel::Small), OL)
-//      Subtarget(TT, CPU, FS, *this),
-//      TLOF(std::make_unique<TargetLoweringObjectFileELF>()) {
-{
-//  initAsmInfo();
+      Options, RM.getValueOr(Reloc::Static), CM.getValueOr(CodeModel::Small), OL),
+      Subtarget(TT, CPU, FS, *this),
+      TLOF(std::make_unique<TriCoreTargetObjectFile>()) {
+    initAsmInfo();
 }
 
 

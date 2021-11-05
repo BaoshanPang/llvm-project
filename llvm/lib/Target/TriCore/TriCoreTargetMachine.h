@@ -14,14 +14,14 @@
 #define LLVM_LIB_TARGET_TRICORE_TRICORETARGETMACHINE_H
 
 #include "TriCoreInstrInfo.h"
-//#include "TriCoreSubtarget.h"
+#include "TriCoreSubtarget.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetLoweringObjectFile.h"
 
 namespace llvm {
 
 class TriCoreTargetMachine : public LLVMTargetMachine {
-//  TriCoreSubtarget Subtarget;
+  TriCoreSubtarget Subtarget;
   std::unique_ptr<TargetLoweringObjectFile> TLOF;
 
 public:
@@ -31,21 +31,21 @@ public:
                        CodeGenOpt::Level OL, bool JIT);
 
 //FIXME
-// const TriCoreSubtarget * getSubtargetImpl() const {
-//  return &Subtarget;
-//  }
+    const TriCoreSubtarget * getSubtargetImpl() const {
+      return &Subtarget;
+    }
 
-  // virtual const TargetSubtargetInfo *
-  // getSubtargetImpl(const Function &) const override {
-  //   return &Subtarget;
-  // }
+    virtual const TargetSubtargetInfo *
+    getSubtargetImpl(const Function &) const override {
+      return &Subtarget;
+    }
 
-  /// Pass Pipeline Configuration
-//  virtual TargetPassConfig *createPassConfig(legacy::PassManagerBase &PM) override;
+ // Pass Pipeline Configuration
+    virtual TargetPassConfig *createPassConfig(legacy::PassManagerBase &PM) override;
 
-  TargetLoweringObjectFile *getObjFileLowering() const override {
-    return TLOF.get();
-  }
+    TargetLoweringObjectFile *getObjFileLowering() const override {
+      return TLOF.get();
+    }
 };
 
 } // end namespace llvm

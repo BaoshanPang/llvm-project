@@ -8,7 +8,7 @@ set(LLVM_TARGET_DEFINITIONS TriCore.td)
 # tablegen(LLVM TriCoreGenDAGISel.inc -gen-dag-isel)
 # tablegen(LLVM TriCoreGenDisassemblerTables.inc -gen-disassembler)
 tablegen(LLVM TriCoreGenInstrInfo.inc -gen-instr-info)
-# tablegen(LLVM TriCoreGenMCCodeEmitter.inc -gen-emitter)
+tablegen(LLVM TriCoreGenMCCodeEmitter.inc -gen-emitter)
 tablegen(LLVM TriCoreGenRegisterInfo.inc -gen-register-info)
 #tablegen(LLVM TriCoreGenSubtargetInfo.inc -gen-subtarget)
 
@@ -17,6 +17,12 @@ add_public_tablegen_target(TriCoreCommonTableGen)
 add_llvm_target(TriCoreCodeGen
   TriCoreTargetMachine.cpp
   TriCoreSubtarget.cpp
+  TriCoreRegisterInfo.cpp
+  TriCoreTargetObjectFile.cpp
+  TriCoreInstrInfo.cpp
+  TriCoreFrameLowering.cpp
+  TriCoreISelLowering.cpp
+  TriCoreCallingConvHook.cpp
 
   LINK_COMPONENTS
   AsmPrinter

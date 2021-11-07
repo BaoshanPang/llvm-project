@@ -163,26 +163,28 @@ TriCoreTargetMachine::TriCoreTargetMachine(const Target &T, const Triple &TT,
 //   return I.get();
 // }
 
-// namespace {
-// /// TriCore Code Generator Pass Configuration Options.
-// class TriCorePassConfig : public TargetPassConfig {
-// public:
-//   TriCorePassConfig(TriCoreTargetMachine &TM, PassManagerBase &PM)
-//     : TargetPassConfig(TM, PM) {}
+ // namespace {
+ // /// TriCore Code Generator Pass Configuration Options.
+ // class TriCorePassConfig : public TargetPassConfig {
+ // public:
+ //   TriCorePassConfig(TriCoreTargetMachine &TM, PassManagerBase &PM)
+ //     : TargetPassConfig(TM, PM) {}
 
-//   TriCoreTargetMachine &getTriCoreTargetMachine() const {
-//     return getTM<TriCoreTargetMachine>();
-//   }
+ //   TriCoreTargetMachine &getTriCoreTargetMachine() const {
+ //     return getTM<TriCoreTargetMachine>();
+ //   }
 
-//   void addIRPasses() override;
-//   bool addInstSelector() override;
-//   void addPreEmitPass() override;
-// };
-// } // namespace
+ //   void addIRPasses() override;
+ //   bool addInstSelector() override;
+ //   void addPreEmitPass() override;
+ // };
+ // } // namespace
 
-// TargetPassConfig *TriCoreTargetMachine::createPassConfig(PassManagerBase &PM) {
+TargetPassConfig *TriCoreTargetMachine::createPassConfig(PassManagerBase &PM) {
 //   return new TriCorePassConfig(*this, PM);
-// }
+    assert(0);
+    return NULL;
+}
 
 // void TriCorePassConfig::addIRPasses() {
 //   addPass(createAtomicExpandPass());

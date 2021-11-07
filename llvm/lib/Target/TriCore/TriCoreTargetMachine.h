@@ -29,7 +29,7 @@ public:
                        StringRef FS, const TargetOptions &Options,
                        Optional<Reloc::Model> RM, Optional<CodeModel::Model> CM,
                        CodeGenOpt::Level OL, bool JIT);
-
+    ~TriCoreTargetMachine() override {};
 //FIXME
     const TriCoreSubtarget * getSubtargetImpl() const {
       return &Subtarget;

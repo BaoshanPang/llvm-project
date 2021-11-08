@@ -22,8 +22,7 @@ namespace llvm {
 class TargetMachine;
 class TriCoreTargetMachine;
 
-FunctionPass *createTriCoreISelDag(TriCoreTargetMachine &TM,
-                               CodeGenOpt::Level OptLevel);
+FunctionPass *createTriCoreISelDag(TriCoreTargetMachine &TM);
 } // end namespace llvm;
 
 #endif

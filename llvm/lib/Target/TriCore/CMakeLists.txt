@@ -5,7 +5,7 @@ set(LLVM_TARGET_DEFINITIONS TriCore.td)
 # tablegen(LLVM TriCoreGenAsmMatcher.inc -gen-asm-matcher)
 tablegen(LLVM TriCoreGenAsmWriter.inc -gen-asm-writer)
 tablegen(LLVM TriCoreGenCallingConv.inc -gen-callingconv)
-# tablegen(LLVM TriCoreGenDAGISel.inc -gen-dag-isel)
+tablegen(LLVM TriCoreGenDAGISel.inc -gen-dag-isel)
 tablegen(LLVM TriCoreGenDisassemblerTables.inc -gen-disassembler)
 tablegen(LLVM TriCoreGenInstrInfo.inc -gen-instr-info)
 tablegen(LLVM TriCoreGenMCCodeEmitter.inc -gen-emitter)
@@ -23,6 +23,7 @@ add_llvm_target(TriCoreCodeGen
   TriCoreFrameLowering.cpp
   TriCoreISelLowering.cpp
   TriCoreCallingConvHook.cpp
+  TriCoreISelDAGToDAG.cpp
 
   LINK_COMPONENTS
   AsmPrinter

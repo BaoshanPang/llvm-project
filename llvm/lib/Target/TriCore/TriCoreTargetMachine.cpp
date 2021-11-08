@@ -163,55 +163,56 @@ TriCoreTargetMachine::TriCoreTargetMachine(const Target &T, const Triple &TT,
 //   return I.get();
 // }
 
- // namespace {
- // /// TriCore Code Generator Pass Configuration Options.
- // class TriCorePassConfig : public TargetPassConfig {
- // public:
- //   TriCorePassConfig(TriCoreTargetMachine &TM, PassManagerBase &PM)
- //     : TargetPassConfig(TM, PM) {}
+ namespace {
+ /// TriCore Code Generator Pass Configuration Options.
+ class TriCorePassConfig : public TargetPassConfig {
+ public:
+   TriCorePassConfig(TriCoreTargetMachine &TM, PassManagerBase &PM)
+     : TargetPassConfig(TM, PM) {}
 
- //   TriCoreTargetMachine &getTriCoreTargetMachine() const {
- //     return getTM<TriCoreTargetMachine>();
- //   }
+   TriCoreTargetMachine &getTriCoreTargetMachine() const {
+     return getTM<TriCoreTargetMachine>();
+   }
 
- //   void addIRPasses() override;
- //   bool addInstSelector() override;
- //   void addPreEmitPass() override;
- // };
- // } // namespace
+   void addIRPasses() override;
+   bool addInstSelector() override;
+   void addPreEmitPass() override;
+ };
+ } // namespace
 
 TargetPassConfig *TriCoreTargetMachine::createPassConfig(PassManagerBase &PM) {
-//   return new TriCorePassConfig(*this, PM);
-    assert(0);
-    return NULL;
+  return new TriCorePassConfig(*this, PM);
 }
 
-// void TriCorePassConfig::addIRPasses() {
-//   addPass(createAtomicExpandPass());
+void TriCorePassConfig::addIRPasses() {
+  addPass(createAtomicExpandPass());
 
-//   TargetPassConfig::addIRPasses();
-// }
+  TargetPassConfig::addIRPasses();
+}
 
-// bool TriCorePassConfig::addInstSelector() {
-//   addPass(createTriCoreISelDag(getTriCoreTargetMachine()));
-//   return false;
-// }
+bool TriCorePassConfig::addInstSelector() {
+  addPass(createTriCoreISelDag(getTriCoreTargetMachine()));
+  return false;
+}
 
-// void TriCorePassConfig::addPreEmitPass(){
-//   addPass(createTriCoreDelaySlotFillerPass());
+void TriCorePassConfig::addPreEmitPass(){
+// TODO
+#if 0
+  addPass(createTriCoreDelaySlotFillerPass());
 
-//   if (this->getTriCoreTargetMachine().getSubtargetImpl()->insertNOPLoad())
-//   {
-//     addPass(new InsertNOPLoad());
-//   }
-//   if (this->getTriCoreTargetMachine().getSubtargetImpl()->detectRoundChange()) {
-//     addPass(new DetectRoundChange());
-//   }
-//   if (this->getTriCoreTargetMachine().getSubtargetImpl()->fixAllFDIVSQRT())
-//   {
-//     addPass(new FixAllFDIVSQRT());
-//   }
-// }
+  if (this->getTriCoreTargetMachine().getSubtargetImpl()->insertNOPLoad())
+  {
+    addPass(new InsertNOPLoad());
+  }
+  if (this->getTriCoreTargetMachine().getSubtargetImpl()->detectRoundChange()) {
+    addPass(new DetectRoundChange());
+  }
+  if (this->getTriCoreTargetMachine().getSubtargetImpl()->fixAllFDIVSQRT())
+  {
+    addPass(new FixAllFDIVSQRT());
+  }
+  #endif
+}
 
 // void TriCoreV8TargetMachine::anchor() { }
 

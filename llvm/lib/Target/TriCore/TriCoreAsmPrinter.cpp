@@ -60,13 +60,13 @@ public:
   StringRef getPassName() const override { return "TriCore Assembly Printer"; }
 
   void EmitFunctionEntryLabel();
-  void EmitInstruction(const MachineInstr *MI);
-  void EmitFunctionBodyStart();
+  void emitInstruction(const MachineInstr *MI) override;
+  void emitFunctionBodyStart() override;
 };
 } // end of anonymous namespace
 
-void TriCoreAsmPrinter::EmitFunctionBodyStart() {
-  assert(0);
+void TriCoreAsmPrinter::emitFunctionBodyStart() {
+//  assert(0);
 //  MCInstLowering.Initialize(Mang, &MF->getContext());
 }
 
@@ -75,7 +75,7 @@ void TriCoreAsmPrinter::EmitFunctionEntryLabel() {
 //  OutStreamer->EmitLabel(CurrentFnSym);
 }
 
-void TriCoreAsmPrinter::EmitInstruction(const MachineInstr *MI) {
+void TriCoreAsmPrinter::emitInstruction(const MachineInstr *MI) {
   MCInst TmpInst;
   MCInstLowering.Lower(MI, TmpInst);
 

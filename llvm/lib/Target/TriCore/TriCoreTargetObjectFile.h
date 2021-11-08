@@ -35,9 +35,10 @@ class TriCoreTargetMachine;
                                 const TargetMachine &TM) const;
     bool IsGlobalInSmallSectionImpl(const GlobalValue *GV,
                                     const TargetMachine &TM) const;
-
+#if 0
     MCSection *SelectSectionForGlobal(const GlobalObject *GO, SectionKind Kind,
                                       const TargetMachine &TM) const override;
+#endif
   };
 } // end namespace llvm
 

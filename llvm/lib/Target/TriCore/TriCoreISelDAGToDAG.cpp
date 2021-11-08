@@ -97,7 +97,7 @@ public:
   : SelectionDAGISel(TM), Subtarget(*TM.getSubtargetImpl()) {}
 
   void Select(SDNode *N) override;
-  SDNode *SelectConstant(SDNode *N);
+  void SelectConstant(SDNode *N);
 
   bool SelectAddr(SDValue Addr, SDValue &Base, SDValue &Offset);
   bool SelectAddr_new(SDValue N, SDValue &Base, SDValue &Disp);
@@ -359,9 +359,9 @@ static int ipow(int base)
     return result;
 }
 
-SDNode *TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
+void TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
   assert(0);
-  return NULL;
+  return;
 #if 0
    // Make sure the immediate size is supported.
     ConstantSDNode *ConstVal = cast<ConstantSDNode>(N);
@@ -500,27 +500,26 @@ SDNode *TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
 }
 
 void TriCoreDAGToDAGISel::Select(SDNode *N) {
-
-  assert(0);
-  return;
-#if 0
   SDLoc dl(N);
   // Dump information about the Node being selected
-  DEBUG(errs().changeColor(raw_ostream::GREEN) << "Selecting: ");
-  DEBUG(N->dump(CurDAG));
-  DEBUG(errs() << "\n");
+  LLVM_DEBUG(errs().changeColor(raw_ostream::GREEN) << "Selecting: ");
+  LLVM_DEBUG(N->dump(CurDAG));
+  LLVM_DEBUG(errs() << "\n");
   switch (N->getOpcode()) {
   case ISD::Constant:
-    return SelectConstant(N);
+    SelectConstant(N);
+    return;
   case ISD::FrameIndex: {
     int FI = cast<FrameIndexSDNode>(N)->getIndex();
     SDValue TFI = CurDAG->getTargetFrameIndex(FI, MVT::i32);
     if (N->hasOneUse()) {
-      return CurDAG->SelectNodeTo(N, TriCore::ADDrc, MVT::i32, TFI,
-          CurDAG->getTargetConstant(0, dl, MVT::i32));
+      CurDAG->SelectNodeTo(N, TriCore::ADDrc, MVT::i32, TFI,
+                           CurDAG->getTargetConstant(0, dl, MVT::i32));
+      return;
     }
-    return CurDAG->getMachineNode(TriCore::ADDrc, dl, MVT::i32, TFI,
-        CurDAG->getTargetConstant(0, dl, MVT::i32));
+    CurDAG->getMachineNode(TriCore::ADDrc, dl, MVT::i32, TFI,
+                           CurDAG->getTargetConstant(0, dl, MVT::i32));
+    return;
   }
   case ISD::STORE: {
     ptyType = false;
@@ -530,16 +529,8 @@ void TriCoreDAGToDAGISel::Select(SDNode *N) {
   }
 }
 
-  SDNode *ResNode = SelectCode(N);
-
-  DEBUG(errs() << "=> ");
-  if (ResNode == nullptr || ResNode == N)
-    DEBUG(N->dump(CurDAG));
-  else
-    DEBUG(ResNode->dump(CurDAG));
-  DEBUG(errs() << "\n");
-  return ResNode;
-#endif
+  SelectCode(N);
+  return;
 }
 /// createTriCoreISelDag - This pass converts a legalized DAG into a
 /// TriCore-specific DAG, ready for instruction scheduling.

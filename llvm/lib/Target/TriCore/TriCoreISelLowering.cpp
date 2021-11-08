@@ -632,7 +632,6 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 		CallingConv::ID CallConv, bool isVarArg,
 		const SmallVectorImpl<ISD::InputArg> &Ins, const SDLoc &dl, SelectionDAG &DAG,
 		SmallVectorImpl<SDValue> &InVals) const {
-  #if 0
 	MachineFunction &MF = DAG.getMachineFunction();
 	MachineRegisterInfo &RegInfo = MF.getRegInfo();
 
@@ -645,7 +644,10 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 	CCState CCInfo(CallConv, isVarArg, DAG.getMachineFunction(), ArgLocs,
 			*DAG.getContext());
 
-	StringRef funName = DAG.getMachineFunction().getFunction()->getName();
+  if(ArgLocs.size()) assert(0);
+  return Chain;
+#if 0
+	StringRef funName = DAG.getMachineFunction().getFunction().getName();
 
 //  DAG.getMachineFunction().getFunction()
 	CCInfo.AnalyzeFormalArguments(Ins, CC_TriCore);
@@ -689,7 +691,7 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 			// If the argument is a pointer type then create a AddrRegsClass
 			// Virtual register.
 			if (TCCH.isRegValPtrType(MF)) {
-				VA.setValVT(MVT(MVT::iPTR));
+//				VA.setValVT(MVT(MVT::iPTR));
 				VReg = RegInfo.createVirtualRegister(&TriCore::AddrRegsRegClass);
 				RegInfo.addLiveIn(VA.getLocReg(), VReg); //mark the register is inuse
 				TCCH.saveRegRecord(funName, VA.getLocReg(), true);
@@ -750,8 +752,6 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 
 	return Chain;
 #endif
-  assert(0);
-  return SDValue();
 }
 
 //===----------------------------------------------------------------------===//

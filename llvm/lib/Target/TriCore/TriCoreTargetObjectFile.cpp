@@ -100,12 +100,12 @@ IsGlobalInSmallSectionImpl(const GlobalValue *GV,
 #endif
 }
 
-
+#if 0
 MCSection *
 TriCoreTargetObjectFile::SelectSectionForGlobal(const GlobalObject *GO,
                                              SectionKind Kind,
                                              const TargetMachine &TM) const {
-  #if 0
+#if 0
   // TODO: Could also support "weak" symbols as well with ".gnu.linkonce.s.*"
   // sections?
 
@@ -114,11 +114,8 @@ TriCoreTargetObjectFile::SelectSectionForGlobal(const GlobalObject *GO,
     return SmallBSSSection;
   if (Kind.isDataNoRel() && IsGlobalInSmallSection(GV, TM, Kind))
     return SmallDataSection;
-
+#endif
   // Otherwise, we work the same as ELF.
   return TargetLoweringObjectFileELF::SelectSectionForGlobal(GV, Kind, Mang,TM);
-#else
-  assert(0);
-  return NULL;
-#endif
 }
+#endif

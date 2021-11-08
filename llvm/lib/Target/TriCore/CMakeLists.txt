@@ -24,6 +24,8 @@ add_llvm_target(TriCoreCodeGen
   TriCoreISelLowering.cpp
   TriCoreCallingConvHook.cpp
   TriCoreISelDAGToDAG.cpp
+  TriCoreAsmPrinter.cpp
+  TriCoreMCInstLower.cpp
 
   LINK_COMPONENTS
   AsmPrinter

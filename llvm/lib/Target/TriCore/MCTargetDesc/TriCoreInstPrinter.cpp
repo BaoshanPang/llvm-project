@@ -24,6 +24,9 @@
 #include "../TriCore.h"
 using namespace llvm;
 
+//#define DEBUG_TYPE "asm-printer"
+//#define GET_INSTRUCTION_NAME
+//#define PRINT_ALIAS_INSTR
 #include "TriCoreGenAsmWriter.inc"
 
 void TriCoreInstPrinter::printRegName(raw_ostream &OS, unsigned RegNo) const {

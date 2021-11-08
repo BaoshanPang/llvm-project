@@ -34,6 +34,7 @@ public:
   virtual void printRegName(raw_ostream &OS, unsigned RegNo) const override;
   void printInst(const MCInst *MI, uint64_t Address, StringRef Annot,
                          const MCSubtargetInfo &STI, raw_ostream &OS) override;
+
     std::pair<const char *, uint64_t> getMnemonic(const MCInst *MI) override;
 
 

@@ -65,10 +65,5 @@ TriCoreELFObjectWriter::TriCoreELFObjectWriter(uint8_t OSABI)
 TriCoreELFObjectWriter::~TriCoreELFObjectWriter() {}
 
 std::unique_ptr<MCObjectTargetWriter> llvm::createTriCoreELFObjectWriter(uint8_t OSABI) {
-#if 0
-  MCELFObjectTargetWriter *MOTW = new TriCoreELFObjectWriter(OSABI);
-  return createELFObjectWriter(MOTW, OS, /*IsLittleEndian=*/true);
-#endif
-  assert(0);
-  return NULL;
+  return std::make_unique<TriCoreELFObjectWriter>(OSABI);
 }

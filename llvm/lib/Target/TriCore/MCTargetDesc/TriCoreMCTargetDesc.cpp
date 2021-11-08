@@ -85,7 +85,7 @@ createTriCoreMCInstPrinter(const Triple &TT, unsigned SyntaxVariant,
 }
 
 // Force static initialization.
-extern "C" void LLVMInitializeTriCoreTargetMC() {
+extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeTriCoreTargetMC() {
   // Register the MC asm info.
   RegisterMCAsmInfoFn X(getTheTriCoreTarget(), createTriCoreMCAsmInfo);
 

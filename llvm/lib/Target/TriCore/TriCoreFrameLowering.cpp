@@ -99,10 +99,6 @@ void TriCoreFrameLowering::emitPrologue(MachineFunction &MF,
   DebugLoc dl = MBBI != MBB.end() ? MBBI->getDebugLoc() : DebugLoc();
   // const TargetFrameLowering *TFI = MF.getSubtarget().getFrameLowering();
   uint64_t StackSize = computeStackSize(MF);
-  if (!StackSize) {
-    return;
-  }
-
   if (hasFP(MF)) {
   	MachineFunction::iterator I;
   	BuildMI(MBB, MBBI, dl, TII.get(TriCore::MOVAAsrr), TriCore::A14)
@@ -111,6 +107,10 @@ void TriCoreFrameLowering::emitPrologue(MachineFunction &MF,
   	// Mark the FramePtr as live-in in every block except the entry
  	   for (I = std::next(MF.begin());	I != MF.end(); ++I)
  	  	 I->addLiveIn(TriCore::A14);
+  }
+
+  if (!StackSize) {
+    return;
   }
 
   // Adjust the stack pointer.

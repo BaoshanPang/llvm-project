@@ -169,11 +169,8 @@ bool TriCoreDAGToDAGISel::MatchAddressBase(SDValue N, TriCoreISelAddressMode &AM
 
 
 bool TriCoreDAGToDAGISel::MatchAddress(SDValue N, TriCoreISelAddressMode &AM) {
-  assert(0);
-  return false;
-#if 0
-  DEBUG(errs() << "MatchAddress: "; AM.dump());
-  DEBUG(errs() << "Node: "; N.dump());
+  LLVM_DEBUG(errs() << "MatchAddress: "; AM.dump());
+  LLVM_DEBUG(errs() << "Node: "; N.dump());
 
 
   switch (N.getOpcode()) {
@@ -182,7 +179,7 @@ bool TriCoreDAGToDAGISel::MatchAddress(SDValue N, TriCoreISelAddressMode &AM) {
 
     uint64_t Val = cast<ConstantSDNode>(N)->getSExtValue();
     AM.Disp += Val;
-    DEBUG(errs() << "MatchAddress->Disp: " << AM.Disp ;);
+    LLVM_DEBUG(errs() << "MatchAddress->Disp: " << AM.Disp ;);
     return false;
   }
 
@@ -234,7 +231,6 @@ bool TriCoreDAGToDAGISel::MatchAddress(SDValue N, TriCoreISelAddressMode &AM) {
   }
 
   return MatchAddressBase(N, AM);
-#endif
 }
 
 /// SelectAddr - returns true if it is able pattern match an addressing mode.
@@ -242,12 +238,9 @@ bool TriCoreDAGToDAGISel::MatchAddress(SDValue N, TriCoreISelAddressMode &AM) {
 /// match by reference.
 bool TriCoreDAGToDAGISel::SelectAddr_new(SDValue N,
     SDValue &Base, SDValue &Disp) {
-  assert(0);
-  return false;
-#if 0
   TriCoreISelAddressMode AM;
 
-  DEBUG( errs().changeColor(raw_ostream::YELLOW,1);
+  LLVM_DEBUG( errs().changeColor(raw_ostream::YELLOW,1);
   N.dump();
   errs().changeColor(raw_ostream::WHITE,0) );
 
@@ -257,7 +250,7 @@ bool TriCoreDAGToDAGISel::SelectAddr_new(SDValue N,
 
   EVT VT = N.getValueType();
   if (AM.BaseType == TriCoreISelAddressMode::RegBase) {
-    DEBUG(errs() << "It's a reg base";);
+    LLVM_DEBUG(errs() << "It's a reg base";);
     if (!AM.Base.Reg.getNode())
       AM.Base.Reg = CurDAG->getRegister(0, VT);
   }
@@ -270,20 +263,19 @@ bool TriCoreDAGToDAGISel::SelectAddr_new(SDValue N,
                      : AM.Base.Reg;
 
   if (AM.GV) {
-    DEBUG(errs() <<"AM.GV" );
+    LLVM_DEBUG(errs() <<"AM.GV" );
     //GlobalAddressSDNode *gAdd = dyn_cast<GlobalAddressSDNode>(N.getOperand(0));
     Base = N;
     Disp = CurDAG->getTargetConstant(AM.Disp, N, MVT::i32);
   }
   else {
-    DEBUG(errs()<<"SelectAddr -> AM.Disp\n";
+    LLVM_DEBUG(errs()<<"SelectAddr -> AM.Disp\n";
     errs()<< "SelectAddr -> Displacement: " << AM.Disp; );
     Disp = CurDAG->getTargetConstant(AM.Disp, SDLoc(N), MVT::i32);
   }
 
 
   return true;
-#endif
 }
 
 
@@ -360,9 +352,6 @@ static int ipow(int base)
 }
 
 void TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
-  assert(0);
-  return;
-#if 0
    // Make sure the immediate size is supported.
     ConstantSDNode *ConstVal = cast<ConstantSDNode>(N);
     uint64_t ImmVal = ConstVal->getZExtValue();
@@ -384,8 +373,9 @@ void TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
         SDValue _constVal = CurDAG->getTargetConstant(0, N, MVT::i32);
         SDValue _width = CurDAG->getTargetConstant(0, N, MVT::i32);
         SDValue _pos = CurDAG->getTargetConstant(0, N, MVT::i32);
-        return CurDAG->getMachineNode(TriCore::IMASKrcpw, N, MVT::i64,
+        CurDAG->getMachineNode(TriCore::IMASKrcpw, N, MVT::i64,
                     _constVal, _pos, _width);
+        return;
       }
 
       // In case both bytes contain set bits then exit
@@ -412,8 +402,9 @@ void TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
         SDValue _width = CurDAG->getTargetConstant(width, N, MVT::i32);
         SDValue _pos = CurDAG->getTargetConstant(posLSB, N, MVT::i32);
 
-        return CurDAG->getMachineNode(TriCore::IMASKrcpw, N, MVT::i64,
+        CurDAG->getMachineNode(TriCore::IMASKrcpw, N, MVT::i64,
             _constVal, _pos, _width);
+        return;
       }
       else if (higherByte!=0 && lowerByte==0) {
         uint64_t posLSB = getFFS(higherByte) - 1;
@@ -431,9 +422,9 @@ void TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
         SDValue _width = CurDAG->getTargetConstant(numConsecBits, N, MVT::i32);
         SDValue _pos = CurDAG->getTargetConstant(posLSB, N, MVT::i32);
 
-        return CurDAG->getMachineNode(TriCore::IMASKrcpw, N, MVT::i64,
+        CurDAG->getMachineNode(TriCore::IMASKrcpw, N, MVT::i64,
             _constVal, _pos, _width);
-
+        return;
       }
 
     }
@@ -468,22 +459,27 @@ void TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
 
     if ((ImmHi == 0) && ImmLo) {
       if (ImmSVal >=0 && ImmSVal < 32768)
-        return CurDAG->getMachineNode(TriCore::MOVrlc, N, MVT::i32, ConstEImm);
+        CurDAG->getMachineNode(TriCore::MOVrlc, N, MVT::i32, ConstEImm);
       else if(ImmSVal >=32768 && ImmSVal < 65536)
-        return CurDAG->getMachineNode(TriCore::MOV_Urlc, N, MVT::i32, ConstEImm);
+        assert(0);
+//        CurDAG->getMachineNode(TriCore::MOV_Urlc, N, MVT::i32, ConstEImm);
 
+      return;
     }
     else if(ImmHi && (ImmLo == 0))
       Move = CurDAG->getMachineNode(TriCore::MOVHrlc, N, MVT::i32, ConstHi);
-    else if((ImmHi == 0) && (ImmLo == 0))
-      return CurDAG->getMachineNode(TriCore::MOVrlc, N, MVT::i32, ConstHi);
+    else if((ImmHi == 0) && (ImmLo == 0)) {
+      CurDAG->getMachineNode(TriCore::MOVrlc, N, MVT::i32, ConstHi);
+      return;
+    }
     else {
 
       Move = CurDAG->getMachineNode(TriCore::MOVHrlc, N, MVT::i32, ConstHi);
 
-      if ( (ImmSVal >= -32768) && (ImmSVal < 0))
-          return CurDAG->getMachineNode(TriCore::MOVrlc, N, MVT::i32, ConstSImm);
-
+      if ( (ImmSVal >= -32768) && (ImmSVal < 0)){
+      CurDAG->getMachineNode(TriCore::MOVrlc, N, MVT::i32, ConstSImm);
+      return;
+    }
       if( (ImmSLo >= -8 && ImmSLo < 8 ) || ImmLo < 8)
         Move = CurDAG->getMachineNode(TriCore::ADDsrc, N, MVT::i32,
                                             SDValue(Move,0), ConstLo);
@@ -495,11 +491,11 @@ void TriCoreDAGToDAGISel::SelectConstant(SDNode *N) {
                                               SDValue(Move,0), ConstLo);
       }
 
-    return Move;
-#endif
+//    return Move;
 }
 
 void TriCoreDAGToDAGISel::Select(SDNode *N) {
+
   SDLoc dl(N);
   // Dump information about the Node being selected
   LLVM_DEBUG(errs().changeColor(raw_ostream::GREEN) << "Selecting: ");

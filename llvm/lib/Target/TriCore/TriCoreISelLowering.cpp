@@ -64,7 +64,7 @@ TriCoreTargetLowering::TriCoreTargetLowering(TriCoreTargetMachine &TriCoreTM)
     : TargetLowering(TriCoreTM), Subtarget(*TriCoreTM.getSubtargetImpl()) {
   // Set up the register classes.
   addRegisterClass(MVT::i32, &TriCore::DataRegsRegClass);
-  //addRegisterClass(MVT::i32, &TriCore::AddrRegsRegClass);
+  addRegisterClass(MVT::i32, &TriCore::AddrRegsRegClass);
   addRegisterClass(MVT::i64, &TriCore::ExtRegsRegClass);
   addRegisterClass(MVT::f32, &TriCore::FPRegsRegClass);
   //addRegisterClass(MVT::i32, &TriCore::PSRegsRegClass);
@@ -644,9 +644,6 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 	CCState CCInfo(CallConv, isVarArg, DAG.getMachineFunction(), ArgLocs,
 			*DAG.getContext());
 
-  if(ArgLocs.size()) assert(0);
-  return Chain;
-#if 0
 	StringRef funName = DAG.getMachineFunction().getFunction().getName();
 
 //  DAG.getMachineFunction().getFunction()
@@ -696,13 +693,13 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 				RegInfo.addLiveIn(VA.getLocReg(), VReg); //mark the register is inuse
 				TCCH.saveRegRecord(funName, VA.getLocReg(), true);
 				TCCH++;
-				ArgIn = DAG.getCopyFromReg(Chain, dl, VReg, RegVT, MVT::iPTR);
+				ArgIn = DAG.getCopyFromReg(Chain, dl, VReg, MVT::iPTR);
 			}
 			else if (TCCH.isRegVali64Type(MF))  {
 				VReg = RegInfo.createVirtualRegister(&TriCore::ExtRegsRegClass);
 				RegInfo.addLiveIn(VA.getLocReg(), VReg); //mark the register is inuse
 				TCCH.saveRegRecord(funName, VA.getLocReg(), false);
-				ArgIn = DAG.getCopyFromReg(Chain, dl, VReg, RegVT, MVT::i64);
+				ArgIn = DAG.getCopyFromReg(Chain, dl, VReg, MVT::i64);
 				TCCH++;
 			}
 			// else place it inside a data register.
@@ -710,7 +707,7 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 				VReg = RegInfo.createVirtualRegister(&TriCore::DataRegsRegClass);
 				RegInfo.addLiveIn(VA.getLocReg(), VReg); //mark the register is inuse
 				TCCH.saveRegRecord(funName, VA.getLocReg(), false);
-				ArgIn = DAG.getCopyFromReg(Chain, dl, VReg, RegVT, MVT::i32);
+				ArgIn = DAG.getCopyFromReg(Chain, dl, VReg, MVT::i32);
 				TCCH++;
 			}
 
@@ -732,7 +729,7 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 		if (VA.getValVT() == MVT::i64)
 			size = 8;
 
-		const int FI = MF.getFrameInfo()->CreateFixedObject(size, Offset, true);
+		const int FI = MF.getFrameInfo().CreateFixedObject(size, Offset, true);
 		EVT PtrTy = getPointerTy(DAG.getDataLayout());
 		SDValue FIPtr = DAG.getFrameIndex(FI, PtrTy);
 
@@ -741,7 +738,7 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 
 		//create a load node for the created frame object
 		SDValue Load = DAG.getLoad(VA.getValVT(), dl, Chain, FIPtr,
-				MachinePointerInfo(), false, false, false, 0);
+				MachinePointerInfo());
 
 		InVals.push_back(Load);
 		TCCH.incrArgPos();
@@ -751,7 +748,6 @@ SDValue TriCoreTargetLowering::LowerFormalArguments(SDValue Chain,
 	//TCCH.printRegRecord();
 
 	return Chain;
-#endif
 }
 
 //===----------------------------------------------------------------------===//

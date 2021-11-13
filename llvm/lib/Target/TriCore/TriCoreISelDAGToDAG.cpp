@@ -60,7 +60,7 @@ struct TriCoreISelAddressMode {
   }
 
   void dump() {
-    errs() << "rriCoreISelAddressMode " << this << '\n';
+    errs() << "TriCoreISelAddressMode " << this << '\n';
     if (BaseType == RegBase && Base.Reg.getNode() != nullptr) {
       errs() << "Base.Reg ";
       Base.Reg.getNode()->dump();
@@ -99,7 +99,7 @@ public:
   void Select(SDNode *N) override;
   void SelectConstant(SDNode *N);
 
-  bool SelectAddr(SDValue Addr, SDValue &Base, SDValue &Offset);
+  bool SelectAddr(const SDValue &Addr, SDValue &Base, SDValue &Offset);
   bool SelectAddr_new(SDValue N, SDValue &Base, SDValue &Disp);
   bool MatchAddress(SDValue N, TriCoreISelAddressMode &AM);
   bool MatchWrapper(SDValue N, TriCoreISelAddressMode &AM);
@@ -123,13 +123,11 @@ bool TriCoreDAGToDAGISel::isPointer() { return ptyType;}
 /// These wrap things that will resolve down into a symbol reference.  If no
 /// match is possible, this returns true, otherwise it returns false.
 bool TriCoreDAGToDAGISel::MatchWrapper(SDValue N, TriCoreISelAddressMode &AM) {
-  assert(0);
-  return false;
-#if 0
   // If the addressing mode already has a symbol as the displacement, we can
   // never match another symbol.
   if (AM.hasSymbolicDisplacement()) {
-    DEBUG(errs().changeColor(raw_ostream::YELLOW,1);
+    assert(0);
+    LLVM_DEBUG(errs().changeColor(raw_ostream::YELLOW,1);
     errs() <<"hasSymbolicDisplacement\n";
     N.dump();
     errs().changeColor(raw_ostream::WHITE,0); );
@@ -138,18 +136,17 @@ bool TriCoreDAGToDAGISel::MatchWrapper(SDValue N, TriCoreISelAddressMode &AM) {
 
   SDValue N0 = N.getOperand(0);
 
-  DEBUG(errs() << "Match Wrapper N => ";
+  LLVM_DEBUG(errs() << "Match Wrapper N => ";
   N.dump();
   errs()<< "N0 => "; N0.dump(); );
 
   if (GlobalAddressSDNode *G = dyn_cast<GlobalAddressSDNode>(N0)) {
     AM.GV = G->getGlobal();
     AM.Disp += G->getOffset();
-    DEBUG(errs() << "MatchWrapper->Displacement: " << AM.Disp );
+    LLVM_DEBUG(errs() << "MatchWrapper->Displacement: " << AM.Disp );
     //AM.SymbolFlags = G->getTargetFlags();
   }
   return false;
-#endif
 }
 
 /// MatchAddressBase - Helper for MatchAddress. Add the specified node to the
@@ -279,7 +276,7 @@ bool TriCoreDAGToDAGISel::SelectAddr_new(SDValue N,
 }
 
 
-bool TriCoreDAGToDAGISel::SelectAddr(SDValue Addr, SDValue &Base, SDValue &Offset) {
+bool TriCoreDAGToDAGISel::SelectAddr(const SDValue &Addr, SDValue &Base, SDValue &Offset) {
 
 
   return SelectAddr_new(Addr, Base, Offset);

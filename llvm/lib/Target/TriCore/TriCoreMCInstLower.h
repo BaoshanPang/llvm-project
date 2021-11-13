@@ -31,12 +31,12 @@ class LLVM_LIBRARY_VISIBILITY TriCoreMCInstLower {
 public:
   TriCoreMCInstLower(class AsmPrinter &asmprinter);
   void Initialize(Mangler *mang, MCContext *C);
-  void Lower(const MachineInstr *MI, MCInst &OutMI) const;
-  MCOperand LowerOperand(const MachineOperand &MO, unsigned offset = 0) const;
+  void Lower(const MachineInstr *MI, MCInst &OutMI, AsmPrinter &AP) const;
+  MCOperand LowerOperand(const MachineOperand &MO, AsmPrinter &AP) const;
 
 private:
   MCOperand LowerSymbolOperand(const MachineOperand &MO,
-                               MachineOperandType MOTy, unsigned Offset) const;
+                               MachineOperandType MOTy, AsmPrinter &AP) const;
 };
 }
 

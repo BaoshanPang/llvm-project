@@ -77,7 +77,7 @@ void TriCoreAsmPrinter::EmitFunctionEntryLabel() {
 
 void TriCoreAsmPrinter::emitInstruction(const MachineInstr *MI) {
   MCInst TmpInst;
-  MCInstLowering.Lower(MI, TmpInst);
+  MCInstLowering.Lower(MI, TmpInst, *this);
 
   EmitToStreamer(*OutStreamer, TmpInst);
 }

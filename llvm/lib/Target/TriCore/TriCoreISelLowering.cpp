@@ -367,7 +367,6 @@ SDValue TriCoreTargetLowering::LowerSELECT_CC(SDValue Op,
 
 SDValue TriCoreTargetLowering::LowerGlobalAddress(SDValue Op, SelectionDAG& DAG) const
 {
-
   EVT VT = Op.getValueType();
 
 	GlobalAddressSDNode *GlobalAddr = cast<GlobalAddressSDNode>(Op.getNode());
@@ -375,7 +374,6 @@ SDValue TriCoreTargetLowering::LowerGlobalAddress(SDValue Op, SelectionDAG& DAG)
 	SDValue TargetAddr =
 		 DAG.getTargetGlobalAddress(GlobalAddr->getGlobal(), Op, MVT::i32, Offset);
 	return DAG.getNode(TriCoreISD::Wrapper, Op, VT, TargetAddr);
-
 }
 
 

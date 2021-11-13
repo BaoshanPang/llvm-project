@@ -41,7 +41,6 @@ void TriCoreInstPrinter::printInst(const MCInst *MI, uint64_t Address, StringRef
 }
 
 static void printExpr(const MCExpr *Expr, raw_ostream &OS) {
-  #if 0
   int Offset = 0;
   const MCSymbolRefExpr *SRE;
 
@@ -71,8 +70,6 @@ static void printExpr(const MCExpr *Expr, raw_ostream &OS) {
     }
     OS << Offset;
   }
-#endif
-  assert(0);
 }
 
 void TriCoreInstPrinter::printPCRelImmOperand(const MCInst *MI, unsigned OpNo,

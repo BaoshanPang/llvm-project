@@ -35,8 +35,7 @@ void TriCoreMCInstLower::Initialize(Mangler *M, MCContext *C) {
 
 MCOperand TriCoreMCInstLower::LowerSymbolOperand(const MachineOperand &MO,
                                              MachineOperandType MOTy,
-                                             unsigned Offset) const {
- #if 0
+                                             AsmPrinter &AP) const {
   const MCSymbol *Symbol;
 
   switch (MOTy) {
@@ -54,6 +53,7 @@ MCOperand TriCoreMCInstLower::LowerSymbolOperand(const MachineOperand &MO,
 //    return MCOperand::createExpr(Expr);
     break;
   }
+#if 0
   case MachineOperand::MO_BlockAddress:
     Symbol = Printer.GetBlockAddressSymbol(MO.getBlockAddress());
     Offset += MO.getOffset();
@@ -69,6 +69,7 @@ MCOperand TriCoreMCInstLower::LowerSymbolOperand(const MachineOperand &MO,
     Symbol = Printer.GetCPISymbol(MO.getIndex());
     Offset += MO.getOffset();
     break;
+#endif
   default:
     llvm_unreachable("<unknown operand type>");
   }
@@ -86,11 +87,9 @@ MCOperand TriCoreMCInstLower::LowerSymbolOperand(const MachineOperand &MO,
       Kind = MCSymbolRefExpr::VK_TRICORE_HI_OFFSET;
       break;
   }
-  const MCSymbolRefExpr *MCSym = MCSymbolRefExpr::create(Symbol, Kind, *Ctx);
+  const MCSymbolRefExpr *MCSym = MCSymbolRefExpr::create(Symbol, Kind, AP.OutContext);
 
-  if (!Offset) {
-    return MCOperand::createExpr(MCSym);
-  }
+  return MCOperand::createExpr(MCSym);
 
   // Assume offset is never negative.
   //assert(Offset > 0);
@@ -102,15 +101,11 @@ MCOperand TriCoreMCInstLower::LowerSymbolOperand(const MachineOperand &MO,
   //Add->dump();
   //MCOperand::createExpr(Add).dump();
   //outs().changeColor(raw_ostream::WHITE,0);
-  return MCOperand::createExpr(MCSym);
-#endif
-  assert(0);
-  return MCOperand::createExpr(0);
-
+  //return MCOperand::createExpr(MCSym);
 }
 
 MCOperand TriCoreMCInstLower::LowerOperand(const MachineOperand &MO,
-                                       unsigned offset) const {
+                                       AsmPrinter &AP) const {
   MachineOperandType MOTy = MO.getType();
 
   switch (MOTy) {
@@ -123,14 +118,14 @@ MCOperand TriCoreMCInstLower::LowerOperand(const MachineOperand &MO,
     }
     return MCOperand::createReg(MO.getReg());
   case MachineOperand::MO_Immediate:
-    return MCOperand::createImm(MO.getImm() + offset);
+    return MCOperand::createImm(MO.getImm());
   case MachineOperand::MO_MachineBasicBlock:
   case MachineOperand::MO_GlobalAddress:
   case MachineOperand::MO_ExternalSymbol:
   case MachineOperand::MO_JumpTableIndex:
   case MachineOperand::MO_ConstantPoolIndex:
   case MachineOperand::MO_BlockAddress:
-    return LowerSymbolOperand(MO, MOTy, offset);
+    return LowerSymbolOperand(MO, MOTy, AP);
   case MachineOperand::MO_RegisterMask:
     break;
   }
@@ -138,11 +133,11 @@ MCOperand TriCoreMCInstLower::LowerOperand(const MachineOperand &MO,
   return MCOperand();
 }
 
-void TriCoreMCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI) const {
+void TriCoreMCInstLower::Lower(const MachineInstr *MI, MCInst &OutMI,AsmPrinter &AP) const {
   OutMI.setOpcode(MI->getOpcode());
 
   for (auto &MO : MI->operands()) {
-    const MCOperand MCOp = LowerOperand(MO);
+    const MCOperand MCOp = LowerOperand(MO, AP);
 
     if (MCOp.isValid()) {
       OutMI.addOperand(MCOp);

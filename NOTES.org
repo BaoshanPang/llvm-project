@@ -1,0 +1,13 @@
+#+TITLE: Notes
+
+* generate code for getting the value of a global variable
+For the following code, how it is translated to assembly code?
+#+BEGIN_SRC c
+int g = 1;
+
+int foo()
+{
+    return g;
+}
+#+END_SRC
+* MachineInstr class vs.

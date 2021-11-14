@@ -149,7 +149,8 @@ void TriCoreInstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
   }
 
   assert(Op.isExpr() && "unknown operand kind in printOperand");
-  printExpr(Op.getExpr(), O);
+//  printExpr(Op.getExpr(), O);
+  Op.getExpr()->print(O, &MAI);
 }
 
 void TriCoreInstPrinter::printCCOperand(const MCInst *MI, unsigned OpNo,

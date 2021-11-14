@@ -1,0 +1,6 @@
+int g = 1;
+
+int foo()
+{
+    return g;
+}

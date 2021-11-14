@@ -12,6 +12,7 @@
 /// corresponding MCInst records.
 ///
 //===----------------------------------------------------------------------===//
+#include "MCTargetDesc/TriCoreMCExpr.h"
 #include "TriCoreMCInstLower.h"
 #include "MCTargetDesc/TriCoreBaseInfo.h"
 #include "llvm/CodeGen/AsmPrinter.h"
@@ -74,22 +75,12 @@ MCOperand TriCoreMCInstLower::LowerSymbolOperand(const MachineOperand &MO,
     llvm_unreachable("<unknown operand type>");
   }
 
-  const unsigned Option = MO.getTargetFlags() & TriCoreII::MO_OPTION_MASK;
-  MCSymbolRefExpr::VariantKind Kind = MCSymbolRefExpr::VK_None;
-
-  switch (Option) {
-    default:
-      break;
-    case TriCoreII::MO_LO_OFFSET:
-      Kind = MCSymbolRefExpr::VK_TRICORE_LO_OFFSET;
-      break;
-    case TriCoreII::MO_HI_OFFSET:
-      Kind = MCSymbolRefExpr::VK_TRICORE_HI_OFFSET;
-      break;
-  }
-  const MCSymbolRefExpr *MCSym = MCSymbolRefExpr::create(Symbol, Kind, AP.OutContext);
-
-  return MCOperand::createExpr(MCSym);
+  TriCoreMCExpr::VariantKind Kind = (TriCoreMCExpr::VariantKind)MO.getTargetFlags();
+  const MCSymbolRefExpr *MCSym = MCSymbolRefExpr::create(Symbol,
+                                                         AP.OutContext);
+  const TriCoreMCExpr *expr = TriCoreMCExpr::create(Kind, MCSym,
+                                                AP.OutContext);
+  return MCOperand::createExpr(expr);
 
   // Assume offset is never negative.
   //assert(Offset > 0);

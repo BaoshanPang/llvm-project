@@ -5,6 +5,7 @@ add_llvm_component_library(LLVMTriCoreDesc
   TriCoreELFObjectWriter.cpp
   TriCoreMCCodeEmitter.cpp
   TriCoreMCAsmInfo.cpp
+  TriCoreMCExpr.cpp
 
   LINK_COMPONENTS
   MC

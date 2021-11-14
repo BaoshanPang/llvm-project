@@ -12,6 +12,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "TriCoreISelLowering.h"
+#include "MCTargetDesc/TriCoreMCExpr.h"
 #include "TriCore.h"
 #include "TriCoreMachineFunctionInfo.h"
 #include "TriCoreSubtarget.h"
@@ -54,6 +55,8 @@ const char *TriCoreTargetLowering::getTargetNodeName(unsigned Opcode) const {
   case TriCoreISD::CMP:      return "TriCoreISD::CMP";
   case TriCoreISD::IMASK:    return "TriCoreISD::IMASK";
   case TriCoreISD::Wrapper:  return "TriCoreISD::Wrapper";
+  case TriCoreISD::Hi:       return "TriCoreISD::Hi";
+  case TriCoreISD::Lo:       return "TriCoreISD::Lo";
   case TriCoreISD::SH:       return "TriCoreISD::SH";
   case TriCoreISD::SHA:      return "TriCoreISD::SHA";
   case TriCoreISD::EXTR:     return "TriCoreISD::EXTR";
@@ -367,6 +370,7 @@ SDValue TriCoreTargetLowering::LowerSELECT_CC(SDValue Op,
 
 SDValue TriCoreTargetLowering::LowerGlobalAddress(SDValue Op, SelectionDAG& DAG) const
 {
+#if 0
   EVT VT = Op.getValueType();
 
 	GlobalAddressSDNode *GlobalAddr = cast<GlobalAddressSDNode>(Op.getNode());
@@ -374,6 +378,24 @@ SDValue TriCoreTargetLowering::LowerGlobalAddress(SDValue Op, SelectionDAG& DAG)
 	SDValue TargetAddr =
 		 DAG.getTargetGlobalAddress(GlobalAddr->getGlobal(), Op, MVT::i32, Offset);
 	return DAG.getNode(TriCoreISD::Wrapper, Op, VT, TargetAddr);
+#else
+  SDLoc DL(Op);
+  EVT VT = Op.getValueType();
+  SDValue Sdv_hi, Sdv_lo;
+  GlobalAddressSDNode *GA = dyn_cast<GlobalAddressSDNode>(Op);
+  Sdv_hi = DAG.getTargetGlobalAddress(GA->getGlobal(),
+                                      SDLoc(GA),
+                                      GA->getValueType(0),
+                                     GA->getOffset(), TriCoreMCExpr::VK_TriCore_HI);
+  Sdv_lo = DAG.getTargetGlobalAddress(GA->getGlobal(),
+                                      SDLoc(GA),
+                                      GA->getValueType(0),
+                                     GA->getOffset(), TriCoreMCExpr::VK_TriCore_LO);
+
+  SDValue Hi = DAG.getNode(TriCoreISD::Hi, DL, VT, Sdv_hi);
+  SDValue Lo = DAG.getNode(TriCoreISD::Lo, DL, VT, Sdv_lo);
+  return DAG.getNode(ISD::ADD, DL, VT, Hi, Lo);
+#endif
 }
 
 

@@ -42,6 +42,8 @@ enum NodeType {
 	CMP,
 	// This load the addressing information
 	Wrapper,
+  Hi,
+  Lo,
 	// This loads the Shift instructions operands. Right and left shift
 	// depends on the signed-ness on the shift value. A negytive value is
 	// a right shift, and vice versa.

@@ -78,6 +78,8 @@ def TriCorecmp     : SDNode<"TriCoreISD::CMP",
 def TriCorelogiccmp: SDNode<"TriCoreISD::LOGICCMP", 
 														SDT_TriCoreLCmp, [SDNPInGlue, SDNPOutGlue]>;
 def TriCoreWrapper : SDNode<"TriCoreISD::Wrapper", SDT_TriCoreWrapper>;
+def TriCoreGlobalHi : SDNode<"TriCoreISD::Hi", SDTIntUnaryOp>;
+def TriCoreGlobalLo : SDNode<"TriCoreISD::Lo", SDTIntUnaryOp>;
 //def TriCoreWrapper : SDNode<"TriCoreISD::Wrapper", SDTIntUnaryOp>;
 def TriCoreimask   : SDNode<"TriCoreISD::IMASK", SDT_TriCoreImask>;
 def TriCoresh      : SDNode<"TriCoreISD::SH",  SDT_TriCoreShift>;
@@ -451,6 +453,7 @@ def MOVUrlc : MOV_CONST<0xBB,"mov.u", (ins u16imm:$const16) ,
               [(set DataRegs:$d, immZExt16:$const16)]>;
 
 def MOVHrlc : MOV_CONST<0x7B, "movh", (ins i32imm:$const16), [/* No Pattern*/]>;
+def MOVrlc2 : MOV_CONST<0x3B, "mov", (ins i32imm:$const16), [/* No Pattern*/]>;
 
 //let isReMaterializable = 1, isAsCheapAsAMove = 1 in 
 def MOVi32 : Pseudo<(outs DataRegs:$d), (ins i32imm:$const32), "##NAME## Pseudo",
@@ -606,6 +609,8 @@ def : Pat<(tricore_call (i32 tglobaladdr:$dst)),
 def : Pat<(i32 (TriCoreWrapper tglobaladdr:$dst)), 
 		 (MOVi32 tglobaladdr:$dst)>;
 
+def : Pat<(TriCoreGlobalHi tglobaladdr:$in), (MOVHrlc tglobaladdr:$in)>;
+def : Pat<(TriCoreGlobalLo tglobaladdr:$in), (MOVrlc2 tglobaladdr:$in)>;
 
 //===----------------------------------------------------------------------===//
 // Tentative Call Instructions

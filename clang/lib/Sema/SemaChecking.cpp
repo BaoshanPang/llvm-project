@@ -660,7 +660,11 @@ struct BuiltinDumpStructGenerator {
           return true;
       } else {
         Format += " ";
-        if (appendFormatSpecifier(FD->getType(), Format)) {
+        QualType PTy = {};
+        if(FD->getType()->isIntegralOrUnscopedEnumerationType()){
+          PTy = S.Context.isPromotableBitField(Field.get());
+        }
+        if (appendFormatSpecifier(!PTy.isNull() ? PTy : FD->getType(), Format)) {        
           // We know how to print this field.
           Args.push_back(Field.get());
         } else {

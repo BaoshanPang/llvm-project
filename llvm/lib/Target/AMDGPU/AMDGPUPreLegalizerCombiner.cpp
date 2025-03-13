@@ -24,6 +24,8 @@
 #include "llvm/CodeGen/GlobalISel/GISelKnownBits.h"
 #include "llvm/CodeGen/GlobalISel/MIPatternMatch.h"
 #include "llvm/CodeGen/MachineDominators.h"
+#include "llvm/CodeGen/MachineInstr.h"
+#include "llvm/CodeGen/TargetOpcodes.h"
 #include "llvm/CodeGen/TargetPassConfig.h"
 #include "llvm/Target/TargetMachine.h"
 
@@ -72,6 +74,10 @@ public:
 
   void applyClampI64ToI16(MachineInstr &MI,
                           const ClampI64ToI16MatchInfo &MatchInfo) const;
+
+  bool matchFPMaxMaxToMax(MachineInstr &MI, const MachineRegisterInfo &MRI,
+                          Register &Reg) const;
+  void applyFPMaxMaxToMax(MachineInstr &MI, Register &Reg) const;
 
 private:
 #define GET_GICOMBINER_CLASS_MEMBERS
@@ -205,6 +211,32 @@ void AMDGPUPreLegalizerCombinerImpl::applyClampI64ToI16(
   B.buildTrunc(MI.getOperand(0).getReg(), Med3);
 
   MI.eraseFromParent();
+}
+
+// convert:
+// %14:_(s32) = G_FMAXNUM %0:_, %13:_
+// %15:_(s32) = G_FMAXNUM %14:_, %13:_
+// To:
+// %15:_(s32) = G_FMAXNUM %0:_, %13:_
+
+bool AMDGPUPreLegalizerCombinerImpl::matchFPMaxMaxToMax(
+    MachineInstr &MI, const MachineRegisterInfo &MRI, Register &Reg) const {
+  const Register Op1 = MI.getOperand(1).getReg();
+  MachineInstr *Max0 = MRI.getVRegDef(Op1);
+  if (Max0 && Max0->getOpcode() == AMDGPU::G_FMAXNUM &&
+      MRI.hasOneUse(Max0->getOperand(0).getReg()) &&
+      MI.getOperand(2).getReg() == Max0->getOperand(2).getReg()) {
+    return true;
+  }
+  return false;
+}
+
+void AMDGPUPreLegalizerCombinerImpl::applyFPMaxMaxToMax(MachineInstr &MI,
+                                                        Register &Reg) const {
+  MachineInstr *Max0 = MRI.getVRegDef(MI.getOperand(1).getReg());
+  Max0->getOperand(0).setReg(MI.getOperand(0).getReg());
+  MI.eraseFromParent();
+  return;
 }
 
 // Pass boilerplate

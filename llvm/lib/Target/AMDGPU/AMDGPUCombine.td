@@ -89,6 +89,12 @@ def fp_minmax_to_clamp : GICombineRule<
          [{ return matchFPMinMaxToClamp(*${min_or_max}, ${matchinfo}); }]),
   (apply [{ applyClamp(*${min_or_max}, ${matchinfo}); }])>;
 
+def fp_maxmax_to_max : GICombineRule<
+  (defs root:$max, register_matchinfo:$matchinfo),
+  (match (wip_match_opcode G_FMAXNUM):$max,
+         [{ return matchFPMaxMaxToMax(*${max}, MRI, ${matchinfo}); }]),
+  (apply [{ applyFPMaxMaxToMax(*${max}, ${matchinfo}); }])>;
+
 def fmed3_intrinsic_to_clamp : GICombineRule<
   (defs root:$fmed3, register_matchinfo:$matchinfo),
   (match (wip_match_opcode G_AMDGPU_FMED3):$fmed3,
@@ -163,7 +169,8 @@ def gfx8_combines : GICombineGroup<[expand_promoted_fmed3]>;
 
 def AMDGPUPreLegalizerCombiner: GICombiner<
   "AMDGPUPreLegalizerCombinerImpl",
-  [all_combines, combine_fmul_with_select_to_fldexp, clamp_i64_to_i16, foldable_fneg]> {
+  [all_combines, combine_fmul_with_select_to_fldexp, clamp_i64_to_i16, foldable_fneg,
+   fp_maxmax_to_max]> {
   let CombineAllMethodName = "tryCombineAllImpl";
 }
 
